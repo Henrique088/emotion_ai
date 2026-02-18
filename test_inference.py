@@ -1,6 +1,8 @@
 import cv2
 import torch
 import numpy as np
+from predictor import predict_emotion
+
 
 # Labels padrão de emoção
 EMOTIONS = ["angry", "disgust", "fear", "happy", "sad", "surprise", "neutral"]
@@ -45,7 +47,8 @@ def detect_emotion(image_path):
 
     for (x, y, w, h) in faces:
 
-        face = gray[y:y+h, x:x+w]
+        face = image[y:y+h, x:x+w]
+
 
         # preprocessamento padrão
         face_resized = cv2.resize(face, (48, 48))
@@ -54,7 +57,8 @@ def detect_emotion(image_path):
         face_tensor = torch.tensor(face_normalized).float()
         face_tensor = face_tensor.unsqueeze(0).unsqueeze(0)
 
-        emotion, confidence = model.predict(face_tensor)
+        emotion, confidence = predict_emotion(face_color)
+
 
         print(f"Emoção detectada: {emotion}")
         print(f"Confiança: {confidence:.2f}")
