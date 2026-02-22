@@ -2,13 +2,18 @@ import torch.nn as nn
 from torchvision import models
 
 def get_model():
-    # Usando a versão V2 dos pesos (mais precisa)
-    model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V2)
+    # Usando EfficientNet_V2_S (Superior à ResNet50 para este caso)
+    try:
+        # Tenta carregar com o novo sistema de pesos
+        model = models.efficientnet_b0(weights='DEFAULT')
+    except:
+        # Tenta carregar no estilo antigo caso o torchvision seja bem antigo
+        model = models.efficientnet_b0(pretrained=True)
 
-    # Adicionando Dropout antes da camada final
-    num_features = model.fc.in_features
-    model.fc = nn.Sequential(
-        nn.Dropout(0.5),
+    # Ajustando a camada final (Classifier)
+    num_features = model.classifier[1].in_features
+    model.classifier = nn.Sequential(
+        nn.Dropout(p=0.3, inplace=True),
         nn.Linear(num_features, 7)
     )
     return model
