@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package emotion;
+
+service EmotionTracker {
+  // O psicólogo envia um frame e recebe as detecções
+  rpc DetectEmotion (EmotionRequest) returns (EmotionResponse);
+}
+
+message EmotionRequest {
+  bytes image_data = 1; // Imagem em formato binário (jpg/png)
+}
+
+message Detection {
+  string label = 1;
+  float confidence = 2;
+  float x_min = 3;
+  float y_min = 4;
+  float x_max = 5;
+  float y_max = 6;
+}
+
+message EmotionResponse {
+  repeated Detection detections = 1;
+}
